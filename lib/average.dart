@@ -1,24 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercises/main.dart';
 
-class Index extends StatelessWidget {
-  const Index({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter exercise',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 58, 71, 183)),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter exercises index'),
-    );
-  }
-}
-
 /* Class */
 class Average extends StatefulWidget {
   const Average({super.key, required this.title});
@@ -30,9 +12,27 @@ class Average extends StatefulWidget {
 
 /* Screen build */
 class _AverageScreenState extends State<Average> {
+  late TextEditingController _averageController = TextEditingController();
+  var numbers = <String>[];
+
+  @override
+  void initState() {
+    super.initState();
+    _averageController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _averageController.dispose();
+    super.dispose();
+  }
+
   /// Average of numbers (user input)
   void GoBack() {
-    runApp(const Index());
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const Index()),
+    );
   }
 
   @override
@@ -42,9 +42,35 @@ class _AverageScreenState extends State<Average> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: const Column(
+      body: Column(
         children: <Widget>[
-          Text('Testing'),
+          const Text(
+              "Let's make the average ot the five numbers you write down there."),
+          TextField(
+            controller: _averageController,
+            decoration: const InputDecoration(
+                labelText: "First number", border: OutlineInputBorder()),
+          ),
+          TextField(
+            controller: _averageController,
+            decoration: const InputDecoration(
+                labelText: "Second number", border: OutlineInputBorder()),
+          ),
+          TextField(
+            controller: _averageController,
+            decoration: const InputDecoration(
+                labelText: "Third number", border: OutlineInputBorder()),
+          ),
+          TextField(
+            controller: _averageController,
+            decoration: const InputDecoration(
+                labelText: "Fourth number", border: OutlineInputBorder()),
+          ),
+          TextField(
+            controller: _averageController,
+            decoration: const InputDecoration(
+                labelText: "Fifth number", border: OutlineInputBorder()),
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton(

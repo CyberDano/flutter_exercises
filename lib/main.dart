@@ -36,14 +36,19 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   /// Average of numbers (user input)
   void GoToAverage() {
-    runApp(const Average(
-      title: 'Average exercise',
-    ));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const Average(title: "Average exercise")));
   }
 
   /// Russian roulette user vs CPU
   void GoToRoulette() {
-    runApp(const Roulette());
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                const Roulette(title: "Russian roulette exercise")));
   }
 
   @override
@@ -51,8 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
