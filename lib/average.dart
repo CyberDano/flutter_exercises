@@ -14,6 +14,7 @@ class Average extends StatefulWidget {
 class _AverageScreenState extends State<Average> {
   late TextEditingController _averageController = TextEditingController();
   var numbers = <String>[];
+  String answer = "";
 
   @override
   void initState() {
@@ -35,6 +36,29 @@ class _AverageScreenState extends State<Average> {
     );
   }
 
+  void AddNumber() {
+    if (_averageController.text.isNotEmpty) {
+      numbers.add(_averageController.text);
+      _averageController.text = "";
+      setState(() {}); // Refrescar Interfaz
+    }
+    Calculate();
+  }
+
+  void Calculate() {
+    if (numbers.length < 5) {
+      answer = "You need five numbers.";
+    } else {
+      double num = 0;
+      for (int n = 0; n < numbers.length; n++) {
+        num = num + int.parse(numbers[n]);
+        print(num);
+      }
+      num = num / 5;
+      answer = "The average is $num";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,32 +69,28 @@ class _AverageScreenState extends State<Average> {
       body: Column(
         children: <Widget>[
           const Text(
-              "Let's make the average ot the five numbers you write down there."),
-          TextField(
-            controller: _averageController,
-            decoration: const InputDecoration(
-                labelText: "First number", border: OutlineInputBorder()),
+              "Let's make the average of the five numbers you write down there."),
+          SizedBox(
+              width: 300.0,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 30),
+                child: TextField(
+                  controller: _averageController,
+                  decoration: const InputDecoration(
+                      labelText: "Your number...",
+                      border: OutlineInputBorder()),
+                ),
+              )),
+          if (numbers.length <= 4)
+            TextButton(onPressed: AddNumber, child: const Text("Add")),
+          ListView.builder(
+            itemCount: numbers.length,
+            itemBuilder: (context, index) {
+              return ListTile(title: Text(numbers[index]));
+            },
+            shrinkWrap: true,
           ),
-          TextField(
-            controller: _averageController,
-            decoration: const InputDecoration(
-                labelText: "Second number", border: OutlineInputBorder()),
-          ),
-          TextField(
-            controller: _averageController,
-            decoration: const InputDecoration(
-                labelText: "Third number", border: OutlineInputBorder()),
-          ),
-          TextField(
-            controller: _averageController,
-            decoration: const InputDecoration(
-                labelText: "Fourth number", border: OutlineInputBorder()),
-          ),
-          TextField(
-            controller: _averageController,
-            decoration: const InputDecoration(
-                labelText: "Fifth number", border: OutlineInputBorder()),
-          )
+          Text(answer)
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -78,6 +98,7 @@ class _AverageScreenState extends State<Average> {
         tooltip: 'Back to Index',
         child: const Text("Go back"),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 }
