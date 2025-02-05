@@ -113,6 +113,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () => GoToScreen(4),
                   child: const Text("Roman translator"),
                 ),
+                TextButton(
+                  onPressed: () => GoToScreen(4),
+                  child: const Text("Free time calculator"),
+                ),
+                TextButton(
+                  onPressed: () => GoToScreen(4),
+                  child: const Text("Room manager"),
+                ),
               ],
             )
           ],

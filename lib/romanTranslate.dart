@@ -55,45 +55,56 @@ class _RomainTranslateScreenState extends State<RomainTranslate> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Column(
-        children: <Widget>[
-          const Text('Roman translate'),
-          SizedBox(
-            width: 500,
-            child: Padding(
-              padding: const EdgeInsets.all(30),
-              child: TextField(
-                keyboardType: TextInputType.text,
-                controller: _romanTranslator,
-                decoration: const InputDecoration(
-                  labelText: "Enter roman number... [ I, V, X, L, C, D, M ]",
-                  border: OutlineInputBorder(),
-                ), // Only letters allowed
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]'))
-                ],
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          double screenWidth = constraints.maxWidth;
+          return Column(
+            children: <Widget>[
+              const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text('Allowed characters:')),
+              const Text(
+                "[ I, V, X, L, C, D, M ]",
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                int decimalValue =
-                    romanToDecimal(_romanTranslator.text.toUpperCase());
-                if (_romanTranslator.text.isNotEmpty) {
-                  if (decimalValue == -1) {
-                    result = 'Invalid key';
-                  } else {
-                    result =
-                        "${_romanTranslator.text.toUpperCase()}:$decimalValue";
-                  }
-                }
-              });
-            },
-            child: const Text('Translate'),
-          ),
-          Text(result),
-        ],
+              SizedBox(
+                width: screenWidth,
+                child: Padding(
+                  padding: const EdgeInsets.all(30),
+                  child: TextField(
+                    keyboardType: TextInputType.text,
+                    controller: _romanTranslator,
+                    decoration: const InputDecoration(
+                      labelText: "Enter roman number...",
+                      border: OutlineInputBorder(),
+                    ), // Only letters allowed
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]'))
+                    ],
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    int decimalValue =
+                        romanToDecimal(_romanTranslator.text.toUpperCase());
+                    if (_romanTranslator.text.isNotEmpty) {
+                      if (decimalValue == -1) {
+                        result = 'Invalid key';
+                      } else {
+                        result =
+                            "${_romanTranslator.text.toUpperCase()}:$decimalValue";
+                      }
+                    }
+                  });
+                },
+                child: const Text('Translate'),
+              ),
+              Text(result),
+            ],
+          );
+        },
       ),
       floatingActionButton: Method.goToHome(context),
     );

@@ -28,7 +28,7 @@ class _CensorerScreenState extends State<Censorer> {
           words[w].startsWith("m") ||
           words[w].startsWith("P") ||
           words[w].startsWith("p")) {
-        String tempWord = words[w].replaceRange(1, words[w].length, "*");
+        String tempWord = words[w].replaceRange(1, words[w].length, "****");
         cherckedWords.add(tempWord);
       } else {
         cherckedWords.add(words[w]);
@@ -52,14 +52,10 @@ class _CensorerScreenState extends State<Censorer> {
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           double screenWidth = constraints.maxWidth;
-          double widgetWidth =
-              screenWidth * 0.7; // 70% del ancho de la pantalla
           return Column(
             children: <Widget>[
-              const Padding(
-                  padding: EdgeInsets.all(10), child: Text('Censorer')),
               SizedBox(
-                  width: widgetWidth,
+                  width: screenWidth,
                   child: Padding(
                     padding: const EdgeInsets.all(30),
                     child: Column(
@@ -76,10 +72,10 @@ class _CensorerScreenState extends State<Censorer> {
                       ],
                     ),
                   )),
-              TextButton(
+              ElevatedButton(
                   onPressed: () =>
                       _censorController.text = "Jesús esto es una pera madura",
-                  child: const Text("Default sentence")),
+                  child: const Text("Put a default sentence")),
               if (checked) Text(checkedSentence)
             ],
           );
