@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercises/average.dart';
+import 'package:flutter_exercises/censorer.dart';
 import 'package:flutter_exercises/roulette.dart';
 
 void main() {
@@ -34,21 +35,31 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  /// Average of numbers (user input)
-  void GoToAverage() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const Average(title: "Average exercise")));
-  }
-
-  /// Russian roulette user vs CPU
-  void GoToRoulette() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                const Roulette(title: "Russian roulette exercise")));
+  // ignore: non_constant_identifier_names
+  GoToScreen(int i) {
+    if (i == 1) {
+      /// Average of numbers (user input)
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const Average(title: "Average exercise")));
+    }
+    if (i == 2) {
+      /// Russian roulette user vs CPU
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  const Roulette(title: "Russian roulette exercise")));
+    }
+    if (i == 3) {
+      /// Hides bad words (user input)
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  const Censorer(title: "Censorer exercise")));
+    }
   }
 
   @override
@@ -69,18 +80,32 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: GoToAverage,
+                  onPressed: () => GoToScreen(1),
                   child: const Text("Average"),
                 ),
                 TextButton(
-                  onPressed: GoToRoulette,
+                  onPressed: () => GoToScreen(2),
                   child: const Text("Russian roulette"),
+                ),
+                TextButton(
+                  onPressed: () => GoToScreen(3),
+                  child: const Text("Censorer"),
                 ),
               ],
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class Method {
+  // ignore: non_constant_identifier_names
+  static FloatingActionButton goToHome(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
+      child: const Icon(Icons.home),
     );
   }
 }

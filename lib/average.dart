@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_exercises/main.dart';
 
 /* Class */
@@ -26,14 +27,6 @@ class _AverageScreenState extends State<Average> {
   void dispose() {
     _averageController.dispose();
     super.dispose();
-  }
-
-  /// Average of numbers (user input)
-  void GoBack() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const Index()),
-    );
   }
 
   void AddNumber() {
@@ -68,17 +61,24 @@ class _AverageScreenState extends State<Average> {
       ),
       body: Column(
         children: <Widget>[
-          const Text(
-              "Let's make the average of the five numbers you write down there."),
+          const Padding(
+              padding: EdgeInsets.all(10),
+              child: Text(
+                  "Let's make the average of the five numbers you write down there.")),
           SizedBox(
               width: 300.0,
               child: Padding(
                 padding: const EdgeInsets.only(top: 30),
                 child: TextField(
+                  keyboardType: TextInputType.number,
                   controller: _averageController,
                   decoration: const InputDecoration(
                       labelText: "Your number...",
                       border: OutlineInputBorder()),
+                  // Only numbers allowed
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
                 ),
               )),
           if (numbers.length <= 4)
@@ -90,15 +90,10 @@ class _AverageScreenState extends State<Average> {
             },
             shrinkWrap: true,
           ),
-          Text(answer)
+          Text(answer),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: GoBack,
-        tooltip: 'Back to Index',
-        child: const Text("Go back"),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: Method.goToHome(context),
     );
   }
 }
