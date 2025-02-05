@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercises/average.dart';
 import 'package:flutter_exercises/censorer.dart';
+import 'package:flutter_exercises/romanTranslate.dart';
 import 'package:flutter_exercises/roulette.dart';
 
 void main() {
@@ -60,6 +61,14 @@ class _MyHomePageState extends State<MyHomePage> {
               builder: (context) =>
                   const Censorer(title: "Censorer exercise")));
     }
+    if (i == 4) {
+      /// Hides bad words (user input)
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  const RomainTranslate(title: "Roman numbers translator")));
+    }
   }
 
   @override
@@ -75,6 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             const Text(
               'Select which exercise do you want to see:',
+              style: TextStyle(
+                  color: Color.fromARGB(255, 17, 0, 255),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -93,6 +106,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () => GoToScreen(4),
+                  child: const Text("Roman translator"),
+                ),
+              ],
+            )
           ],
         ),
       ),

@@ -29,6 +29,7 @@ class _AverageScreenState extends State<Average> {
     super.dispose();
   }
 
+  // ignore: non_constant_identifier_names
   void AddNumber() {
     if (_averageController.text.isNotEmpty) {
       numbers.add(_averageController.text);
@@ -38,6 +39,7 @@ class _AverageScreenState extends State<Average> {
     Calculate();
   }
 
+  // ignore: non_constant_identifier_names
   void Calculate() {
     if (numbers.length < 5) {
       answer = "You need five numbers.";
@@ -45,7 +47,6 @@ class _AverageScreenState extends State<Average> {
       double num = 0;
       for (int n = 0; n < numbers.length; n++) {
         num = num + int.parse(numbers[n]);
-        print(num);
       }
       num = num / 5;
       answer = "The average is $num";

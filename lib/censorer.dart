@@ -1,7 +1,7 @@
-/* Class */
 import 'package:flutter/material.dart';
 import 'package:flutter_exercises/main.dart';
 
+/* Class */
 class Censorer extends StatefulWidget {
   const Censorer({super.key, required this.title});
   final String title;
