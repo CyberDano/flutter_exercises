@@ -22,7 +22,7 @@ class _FreeTimeCalcScreenState extends State<FreeTimeCalc> {
   void StimatedHours() {
     setState(() {
       stimatedTime = "";
-      int time = calculateLeisureHours();
+      int time = Calculate();
       stimatedTime = "You have ";
       if (time > 0) {
         stimatedTime +=
@@ -33,40 +33,24 @@ class _FreeTimeCalcScreenState extends State<FreeTimeCalc> {
     });
   }
 
-  int calculateLeisureHours() {
-    int totalHoursInDay = 24;
+  // ignore: non_constant_identifier_names
+  int Calculate() {
+    if (_currentWorkValue + _currentSleepValue > 24) return -1;
 
     // Horas de ocio antes de la jubilación
     double yearsUntilRetirement = 65 - _currentAgeValue;
-    double workLeisureHours = yearsUntilRetirement *
-        365 *
-        (totalHoursInDay - (_currentWorkValue + _currentSleepValue));
+    double workLeisureHours = (yearsUntilRetirement > 0)
+        ? yearsUntilRetirement *
+            365 *
+            (24 - (_currentWorkValue + _currentSleepValue))
+        : 0;
 
     // Horas de ocio después de la jubilación
-    double retirementLeisureHours = averageAge -
-        (_currentSleepValue * (_currentAgeValue / totalHoursInDay));
+    double retirementLeisureHours = (yearsUntilRetirement > 0)
+        ? averageAge - (_currentSleepValue * (averageAge / 24))
+        : 0;
 
     return (workLeisureHours + retirementLeisureHours).round();
-  }
-
-// ignore: non_constant_identifier_names
-  double Calculate() {
-    double agetime = (_currentAgeValue * 365) * 24; // age
-    double worktime = (24 / _currentWorkValue); // work
-    double sleeptime = (24 / _currentSleepValue); // sleep
-    double retirement = (65 * 365) * 24; // 65 years in hours
-    if ((retirement - agetime) > 0) {
-      // working
-      if (agetime < retirement) {
-        agetime = (retirement - agetime);
-        agetime = agetime - (agetime / sleeptime) - (agetime / worktime);
-        // retirement
-      } else {
-        agetime = (averageAge) - agetime;
-        agetime = agetime - (agetime / sleeptime);
-      }
-    }
-    return (agetime + (averageAge));
   }
 
   @override
@@ -134,6 +118,10 @@ class _FreeTimeCalcScreenState extends State<FreeTimeCalc> {
           ElevatedButton(
               onPressed: () {
                 if ((_currentWorkValue + _currentSleepValue) > 24) {
+                  setState(() {
+                    stimatedTime =
+                        "Wrong data. Sleep + work can't be higher than 24 hours.";
+                  });
                 } else if ((_currentWorkValue + _currentSleepValue) != 0) {
                   StimatedHours();
                 }
