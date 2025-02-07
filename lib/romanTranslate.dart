@@ -3,16 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_exercises/main.dart';
 
 /* Class */
-class RomainTranslate extends StatefulWidget {
-  const RomainTranslate({super.key, required this.title});
+class RomanTranslate extends StatefulWidget {
+  const RomanTranslate({super.key, required this.title});
   final String title;
 
   @override
-  State<RomainTranslate> createState() => _RomainTranslateScreenState();
+  State<RomanTranslate> createState() => _RomainTranslateScreenState();
 }
 
 /* Screen build */
-class _RomainTranslateScreenState extends State<RomainTranslate> {
+class _RomainTranslateScreenState extends State<RomanTranslate> {
   // ignore: prefer_final_fields
   late TextEditingController _romanTranslator = TextEditingController();
   final Map<String, int> romanNumerals = {

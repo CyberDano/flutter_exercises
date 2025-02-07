@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercises/average.dart';
 import 'package:flutter_exercises/censorer.dart';
+import 'package:flutter_exercises/freeTimeCalculator.dart';
 import 'package:flutter_exercises/romanTranslate.dart';
 import 'package:flutter_exercises/roulette.dart';
 
@@ -67,7 +68,15 @@ class _MyHomePageState extends State<MyHomePage> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  const RomainTranslate(title: "Roman numbers translator")));
+                  const RomanTranslate(title: "Roman numbers translator")));
+    }
+    if (i == 5) {
+      /// Hides bad words (user input)
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  const FreeTimeCalc(title: "Free time calculator")));
     }
   }
 
@@ -114,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: const Text("Roman translator"),
                 ),
                 TextButton(
-                  onPressed: () => GoToScreen(4),
+                  onPressed: () => GoToScreen(5),
                   child: const Text("Free time calculator"),
                 ),
                 TextButton(
