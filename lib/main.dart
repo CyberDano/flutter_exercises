@@ -3,6 +3,7 @@ import 'package:flutter_exercises/average.dart';
 import 'package:flutter_exercises/censorer.dart';
 import 'package:flutter_exercises/freeTimeCalculator.dart';
 import 'package:flutter_exercises/romanTranslate.dart';
+import 'package:flutter_exercises/roomManager.dart';
 import 'package:flutter_exercises/roulette.dart';
 
 void main() {
@@ -78,6 +79,13 @@ class _MyHomePageState extends State<MyHomePage> {
               builder: (context) =>
                   const FreeTimeCalc(title: "Free time calculator")));
     }
+    if (i == 6) {
+      /// Hides bad words (user input)
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const RoomManager(title: "Room manager")));
+    }
   }
 
   @override
@@ -127,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: const Text("Free time calculator"),
                 ),
                 TextButton(
-                  onPressed: () => GoToScreen(4),
+                  onPressed: () => GoToScreen(6),
                   child: const Text("Room manager"),
                 ),
               ],

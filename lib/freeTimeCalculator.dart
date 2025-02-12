@@ -12,6 +12,7 @@ class FreeTimeCalc extends StatefulWidget {
 
 /* Screen build */
 class _FreeTimeCalcScreenState extends State<FreeTimeCalc> {
+  /* Como mejora: ajustar de forma dinámica las horas para no superar las 24 horas en total */
   double _currentAgeValue = 20;
   double _currentSleepValue = 8;
   double _currentWorkValue = 8;
