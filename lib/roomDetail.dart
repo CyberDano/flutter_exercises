@@ -34,8 +34,22 @@ class RoomDetailScreenState extends State<RoomDetailScreen> {
                 style: const TextStyle(fontSize: 18)),
             Text('Date: ${widget.room.RoomDateFormat(widget.room)}',
                 style: const TextStyle(fontSize: 18)),
-            Text(widget.room.DictPeople(widget.room),
-                style: const TextStyle(fontSize: 18)),
+            if (widget.room.people.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              const Text('Occupied by:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: widget.room.people.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(widget.room.people[index]),
+                    );
+                  },
+                ),
+              ),
+            ] else
+              const Text('The room is empty.', style: TextStyle(fontSize: 18)),
           ],
         ),
       ),
