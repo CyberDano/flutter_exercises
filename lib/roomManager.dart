@@ -14,7 +14,8 @@ class Room {
   bool reserved = false;
 
   /* Builder */
-  Room(this.name, this.number, this.people, this.reserved);
+  Room.noDate(this.name, this.number, this.people, this.reserved);
+  Room.withDate(this.name, this.number, this.people, this.reserved, this.date);
 
   /* Own functions */
   /// Shows if the room is reserved or free
@@ -64,10 +65,10 @@ class RoomManager extends StatefulWidget {
 /* Screen build */
 class _RoomManagerScreenState extends State<RoomManager> {
   List<Room> roomList = [
-    Room("Apps", 516, [], false),
-    Room("DAM", 408, ["Juan", "Javier"], true),
-    Room("Diseño", 311, ["Jessica"], false),
-    Room("Videojuegos 1", 520, [], true)
+    Room.noDate("Apps", 516, [], false),
+    Room.noDate("DAM", 408, ["Juan", "Javier"], true),
+    Room.noDate("Diseño", 311, ["Jessica"], false),
+    Room.noDate("Videojuegos 1", 520, [], true)
   ];
 
   /// Metodo para reservar una sala
@@ -187,7 +188,7 @@ class _RoomManagerScreenState extends State<RoomManager> {
         break;
       }
     }
-    Room newRoom = Room(newName, newNumber, peopleList, false);
+    Room newRoom = Room.noDate(newName, newNumber, peopleList, false);
     List<Room> newList = list;
     newList.add(newRoom);
     RoomList(newList);
@@ -252,6 +253,11 @@ class _RoomManagerScreenState extends State<RoomManager> {
                             title: room.name,
                             room: room,
                           )));
+            },
+            onLongPress: () {
+              setState(() {
+                roomList.remove(room);
+              });
             },
           );
         },

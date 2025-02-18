@@ -17,6 +17,7 @@ class _NewRoomScreenState extends State<NewRoomScreen> {
   String _name = '';
   int _number = 0;
   List<String> _people = [];
+  bool reserved = false;
 
   /// Busca la sala especificada por numero o nombre
   /// Devuelve su posicion
@@ -84,6 +85,22 @@ class _NewRoomScreenState extends State<NewRoomScreen> {
                   }
                 },
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Is reserved?", style: TextStyle(fontSize: 18)),
+                  Switch(
+                    // This bool value toggles the switch.
+                    value: reserved,
+                    onChanged: (bool value) {
+                      // This is called when the user toggles the switch.
+                      setState(() {
+                        reserved = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: _people.length,
@@ -102,7 +119,9 @@ class _NewRoomScreenState extends State<NewRoomScreen> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     Navigator.pop(
-                        context, Room(_name, _number, _people, false));
+                        context,
+                        Room.withDate(
+                            _name, _number, _people, reserved, DateTime.now()));
                   }
                 },
                 child: const Text('Add Room',

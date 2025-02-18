@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercises/roomManager.dart';
+import 'package:flutter_exercises/roomReserve.dart';
 
 /* Class */
 class RoomDetailScreen extends StatefulWidget {
@@ -13,6 +14,25 @@ class RoomDetailScreen extends StatefulWidget {
 
 /* Screen build */
 class RoomDetailScreenState extends State<RoomDetailScreen> {
+  DateTime selectDate = DateTime.now();
+
+  Future<void> _selectDate() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2023),
+      lastDate: DateTime(2030),
+    );
+
+    if (pickedDate != null && pickedDate != selectDate) {
+      setState(() {
+        selectDate = pickedDate;
+        widget.room.reserved = true;
+        widget.room.ShowState(widget.room);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,6 +52,9 @@ class RoomDetailScreenState extends State<RoomDetailScreen> {
                 style: const TextStyle(fontSize: 18)),
             Text('State: ${widget.room.ShowState(widget.room)}',
                 style: const TextStyle(fontSize: 18)),
+            if (!widget.room.reserved)
+              OutlinedButton(
+                  onPressed: _selectDate, child: const Text('Select Date')),
             Text('Date: ${widget.room.RoomDateFormat(widget.room)}',
                 style: const TextStyle(fontSize: 18)),
             if (widget.room.people.isNotEmpty) ...[
