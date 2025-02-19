@@ -35,8 +35,8 @@ class RoomDetailScreenState extends State<RoomDetailScreen> {
         rooms.roomList[widget.index].reserved = true;
         rooms.roomList[widget.index].date = pickedDate;
         rooms.saveList();
+        widget.room.ShowState(widget.room);
       });
-      widget.room.ShowState(widget.room);
     }
   }
 

@@ -112,6 +112,7 @@ class RoomListClass with ChangeNotifier {
     if (jsonList != null) {
       roomList =
           jsonList.map((item) => Room.fromJson(json.decode(item))).toList();
+      notifyListeners();
     } else {
       roomList.addAll([
         Room.noDate("Apps", 516, [], false),
