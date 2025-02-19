@@ -1,23 +1,48 @@
-import 'package:flutter_exercises/newRoom.dart';
+import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 import 'package:flutter_exercises/roomDetail.dart';
+import 'package:flutter_exercises/newRoom.dart';
 
 /* Room class */
 class Room {
-  String name = "";
-  int number = 0;
-  List<String> people = [];
-  // Date (Autocomplete)
-  DateTime date = DateTime.now();
-  bool reserved = false;
+  String name;
+  int number;
+  List<String> people;
+  DateTime date;
+  bool reserved;
 
-  /* Builder */
-  Room.noDate(this.name, this.number, this.people, this.reserved);
+  /* Builders */
+  Room.noDate(this.name, this.number, this.people, this.reserved)
+      : date = DateTime.now();
   Room.withDate(this.name, this.number, this.people, this.reserved, this.date);
 
   /* Own functions */
+  /// Maps the data of Room class
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'number': number,
+      'people': people,
+      'date': date.toIso8601String(),
+      'reserved': reserved,
+    };
+  }
+
+  /// Instantiate the json of Room class
+  factory Room.fromJson(Map<String, dynamic> json) {
+    return Room.withDate(
+      json['name'],
+      json['number'],
+      List<String>.from(json['people']),
+      json['reserved'],
+      DateTime.parse(json['date']),
+    );
+  }
+
   /// Shows if the room is reserved or free
   // ignore: non_constant_identifier_names
   String ShowState(Room room) => reserved ? "Reserved." : "Free.";
@@ -53,6 +78,52 @@ class Room {
   }
 }
 
+/* Room list provider */
+class RoomListClass with ChangeNotifier {
+  List<Room> roomList = [];
+
+  /// Adds character to list
+  void addRoom(Room r) {
+    roomList.add(r);
+    saveList();
+  }
+
+  /// Removes character from list
+  void removeRoom(Room r) {
+    roomList.remove(r);
+    saveList();
+  }
+
+  /// Saves the list of rooms
+  // ignore: unused_element
+  void saveList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> jsonList =
+        roomList.map((c) => json.encode(c.toJson())).toList();
+    prefs.setStringList('Rooms', jsonList);
+    notifyListeners();
+  }
+
+  /// Loads the saved list of rooms
+  // ignore: unused_element
+  void loadList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? jsonList = prefs.getStringList('Rooms');
+    if (jsonList != null) {
+      roomList =
+          jsonList.map((item) => Room.fromJson(json.decode(item))).toList();
+    } else {
+      roomList.addAll([
+        Room.noDate("Apps", 516, [], false),
+        Room.noDate("DAM", 408, ["Juan", "Javier"], true),
+        Room.noDate("Diseño", 311, ["Jessica"], false),
+        Room.noDate("Videojuegos 1", 520, [], true)
+      ]);
+      notifyListeners();
+    }
+  }
+}
+
 /* Class */
 class RoomManager extends StatefulWidget {
   const RoomManager({super.key, required this.title});
@@ -64,203 +135,37 @@ class RoomManager extends StatefulWidget {
 
 /* Screen build */
 class _RoomManagerScreenState extends State<RoomManager> {
-  List<Room> roomList = [
-    Room.noDate("Apps", 516, [], false),
-    Room.noDate("DAM", 408, ["Juan", "Javier"], true),
-    Room.noDate("Diseño", 311, ["Jessica"], false),
-    Room.noDate("Videojuegos 1", 520, [], true)
-  ];
-
-  /// Metodo para reservar una sala
-// ignore: non_constant_identifier_names
-  RoomSelector(List<Room> list) {
-    List<String> freeList = [];
-    for (var r in list) {
-      if (!r.reserved) {
-        freeList.add("${r.number} - ${r.name}");
-      }
-    }
-    print(
-        "¿Que sala quieres reservar?\nDisponibles: $freeList"); // Muestra solo las salas libres
-    int index = 0; // Input;
-    var numindex = Exists("$index", list);
-    if (numindex > -1) {
-      list[numindex].reserved = true;
-      int i = 0;
-      List<String> peopleList = [];
-      // Si la sala esta vacia
-      if (list[numindex].people.isEmpty) {
-        print("¿Por quien va a ser reservada?");
-        while (true) {
-          i += 1;
-          print("Dime el nombre $i:\n(Enter para omitir)");
-          String member = ""; // Input;
-          if (member.isNotEmpty) {
-            peopleList.add(member);
-            break;
-          }
-        }
-      }
-      list[numindex].people = peopleList;
-      RoomList(list);
-      // Si la sala esta ocupada
-    } else {
-      print("Has reservado la sala, pero hay alguien en ella.");
-      print("¿Quieres evacuar la sala?");
-      String answer = ""; // Input;
-      // Si se decide evacuar la sala
-      if (answer[0].toUpperCase() == "S") {
-        print("Evacuando...\n");
-        list[numindex].people = []; // vacia la lista de ocupantes
-        RoomList(list);
-        // Reserva sin vaciar la lista de ocupantes
-      } else {
-        RoomList(list);
-      }
-    }
-  }
-
-  /// Listado de salas registradas
-  // ignore: non_constant_identifier_names
-  RoomList(List<Room> list) {
-    print("Listado de salas registradas:");
-    for (var s in list) {
-      String text =
-          "- ${s.number} (${s.name})\n\tEstado: ${s.ShowState(s)}${s.DictPeople(s)}";
-      if (s.reserved) {
-        text += "\n\t${s.RoomDateFormat(s)}";
-      }
-      print(text);
-    }
-    print("\n¿Quieres reservar una de las salas?");
-    String answer = ""; // Input;
-    // Si se decide evacuar la sala
-    if (answer[0].toUpperCase() == "S") {
-      RoomSelector(list);
-    }
-    print("\n¿Quieres añadir una nueva sala?");
-    answer = ""; // Input;
-    // Si se decide evacuar la sala
-    if (answer[0].toUpperCase() == "S") {
-      NewRoom(list);
-    }
-  }
-
-  /// Crea una nueva sala
-// ignore: non_constant_identifier_names
-  NewRoom(List<Room> list) {
-    int newNumber = -1;
-    String newName = "";
-    List<String> peopleList = [];
-    // Validar el numero
-    while (true) {
-      print("¿Cual es el numero de la sala?");
-      newNumber = Validate(0); // Input;
-      for (int n = 0; n < list.length - 1; n++) {
-        if (newNumber == list[n].number) {
-          print("Esa sala ya existe.");
-          break;
-        }
-      }
-      if (newNumber > 0) {
-        break;
-      }
-    }
-    // Validar el nombre
-    while (true) {
-      print("¿Cual es el nombre de la sala?");
-      newName = ""; // Input;
-      if (newName.isEmpty) {
-        print("Necesita un nombre.");
-      } else {
-        break;
-      }
-    }
-    // Validar los ocupantes
-    print("¿Quien la ocupa?");
-    int i = 0;
-    while (true) {
-      i += 1;
-      print("Dime el nombre \(i):\n(Enter para omitir)");
-      String member = ""; // Input;
-      if (member.isNotEmpty) {
-        peopleList.add(member);
-        break;
-      }
-    }
-    Room newRoom = Room.noDate(newName, newNumber, peopleList, false);
-    List<Room> newList = list;
-    newList.add(newRoom);
-    RoomList(newList);
-  }
-
-  /// Valida que el dato introducido por el usuario sea valido
-  /// Devuelve el valor numerico
-// ignore: non_constant_identifier_names
-  int Validate(var input) {
-    if (input.isEmpty) {
-      print("Valor no introducido.");
-    } else {
-      if (input.contains(",") || input.contains(".")) {
-        print("Solo enteros. Prueba otra vez.");
-      } else {
-        for (var n in input) {
-          if (n.isLetter || n.isSymbol) {
-            print("No acepto ni letras ni símbolos. Prueba otra vez.");
-          } else {
-            int num = input;
-            return num;
-          }
-        }
-      }
-    }
-    return -1;
-  }
-
-  /// Busca la sala especificada por numero o nombre
-  /// Devuelve su posicion
-// ignore: non_constant_identifier_names
-  int Exists(String input, List<Room> list) {
-    for (int n = 0; n < list.length - 1; n++) {
-      if (input.toLowerCase() == list[n].name.toLowerCase()) {
-        return n;
-      } else if (int.parse(input) == list[n].number) {
-        return n;
-      }
-    }
-    return -1;
+  @override
+  void initState() {
+    super.initState();
+    // Cargar la lista de habitaciones favoritas
+    final rooms = Provider.of<RoomListClass>(context, listen: false);
+    rooms.loadList();
   }
 
   @override
   Widget build(BuildContext context) {
+    final rooms = Provider.of<RoomListClass>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Room management'),
       ),
-      body: ListView.builder(
-        itemCount: roomList.length,
-        itemBuilder: (context, index) {
-          final room = roomList[index];
-          return ListTile(
-            title: Text('${room.number} - ${room.name}'),
-            subtitle: Text('${room.ShowState(room)} ${room.DictPeople(room)}'),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => RoomDetailScreen(
-                            title: room.name,
-                            room: room,
-                          )));
-            },
-            onLongPress: () {
-              setState(() {
-                roomList.remove(room);
-              });
-            },
-          );
-        },
+      body: Column(
+        children: [
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Long press to remove a room"),
+              Icon(Icons.delete),
+            ],
+          ),
+          SizedBox(
+            height: 500,
+            width: 500,
+            child: ListOfRooms(),
+          )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -269,20 +174,53 @@ class _RoomManagerScreenState extends State<RoomManager> {
             MaterialPageRoute(
               builder: (context) => NewRoomScreen(
                 title: 'Adding new room',
-                rooms: roomList,
+                rooms: rooms.roomList,
               ),
             ),
           );
 
           if (newRoom != null) {
             setState(() {
-              roomList.add(newRoom);
+              rooms.addRoom(newRoom);
             });
           }
         },
         tooltip: 'Add New Room',
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  /// List of rooms in provider
+  // ignore: non_constant_identifier_names
+  ListView ListOfRooms() {
+    final rooms = Provider.of<RoomListClass>(context);
+    return ListView.builder(
+      itemCount: rooms.roomList.length,
+      itemBuilder: (context, index) {
+        final room = rooms.roomList[index];
+        return ListTile(
+          title: Text('${room.number} - ${room.name}'),
+          subtitle: Text('${room.ShowState(room)} ${room.DictPeople(room)}'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RoomDetailScreen(
+                  title: room.name,
+                  room: room,
+                  index: index,
+                ),
+              ),
+            );
+          },
+          onLongPress: () {
+            setState(() {
+              rooms.removeRoom(room);
+            });
+          },
+        );
+      },
     );
   }
 }

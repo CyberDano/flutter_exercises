@@ -5,9 +5,15 @@ import 'package:flutter_exercises/freeTimeCalculator.dart';
 import 'package:flutter_exercises/romanTranslate.dart';
 import 'package:flutter_exercises/roomManager.dart';
 import 'package:flutter_exercises/roulette.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const Index());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => RoomListClass(),
+      child: const Index(),
+    ),
+  );
 }
 
 class Index extends StatelessWidget {

@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercises/roomManager.dart';
-import 'package:flutter_exercises/roomReserve.dart';
+import 'package:provider/provider.dart';
 
 /* Class */
 class RoomDetailScreen extends StatefulWidget {
-  const RoomDetailScreen({super.key, required this.title, required this.room});
+  const RoomDetailScreen(
+      {super.key,
+      required this.title,
+      required this.room,
+      required this.index});
   final String title;
   final Room room;
+  final int index;
 
   @override
   State<RoomDetailScreen> createState() => RoomDetailScreenState();
@@ -26,10 +31,12 @@ class RoomDetailScreenState extends State<RoomDetailScreen> {
 
     if (pickedDate != null && pickedDate != selectDate) {
       setState(() {
-        selectDate = pickedDate;
-        widget.room.reserved = true;
-        widget.room.ShowState(widget.room);
+        final rooms = Provider.of<RoomListClass>(context, listen: false);
+        rooms.roomList[widget.index].reserved = true;
+        rooms.roomList[widget.index].date = pickedDate;
+        rooms.saveList();
       });
+      widget.room.ShowState(widget.room);
     }
   }
 

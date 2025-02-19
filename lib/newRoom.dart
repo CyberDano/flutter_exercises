@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercises/roomManager.dart';
+import 'package:provider/provider.dart';
 
 /* Class */
 class NewRoomScreen extends StatefulWidget {
@@ -16,6 +17,7 @@ class _NewRoomScreenState extends State<NewRoomScreen> {
   final _formKey = GlobalKey<FormState>();
   String _name = '';
   int _number = 0;
+  // ignore: prefer_final_fields
   List<String> _people = [];
   bool reserved = false;
 
@@ -118,10 +120,11 @@ class _NewRoomScreenState extends State<NewRoomScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    Navigator.pop(
-                        context,
-                        Room.withDate(
-                            _name, _number, _people, reserved, DateTime.now()));
+                    final rooms =
+                        Provider.of<RoomListClass>(context, listen: false);
+                    rooms.addRoom(Room.withDate(
+                        _name, _number, _people, reserved, DateTime.now()));
+                    Navigator.pop(context);
                   }
                 },
                 child: const Text('Add Room',
