@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_exercises/main.dart';
 
 /* Class */
@@ -98,6 +99,10 @@ class _RouletteScreenState extends State<Roulette> {
                 labelText: "Your election...",
                 border: OutlineInputBorder(),
               ),
+              // Only numbers allowed
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
             ),
             const SizedBox(height: 20),
             ElevatedButton(
