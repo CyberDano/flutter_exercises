@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_exercises/main.dart';
 
@@ -12,6 +14,63 @@ class Roulette extends StatefulWidget {
 
 /* Screen build */
 class _RouletteScreenState extends State<Roulette> {
+  final TextEditingController _controller = TextEditingController();
+  List<int> chamber = List.generate(6, (index) => index + 1);
+  int bulletPosition = Random().nextInt(6) + 1;
+  String message = "Choose a valid slot (1-6):";
+
+  void playTurn(int playerChoice) {
+    if (!chamber.contains(playerChoice)) {
+      setState(() {
+        message = "Position not available, choose another.";
+      });
+      return;
+    }
+
+    if (playerChoice == bulletPosition) {
+      setState(() {
+        message = "You shoot yourself. ¡Waisted!";
+      });
+      return;
+    } else {
+      setState(() {
+        chamber.remove(playerChoice);
+        message = "Ok. CPU is choosing...";
+      });
+    }
+
+    if (chamber.length == 1) {
+      setState(() {
+        message = "CPU shoot theirself. ¡You win!";
+      });
+      return;
+    }
+
+    Future.delayed(const Duration(seconds: 2), cpuTurn);
+  }
+
+  void cpuTurn() {
+    int cpuChoice = chamber[Random().nextInt(chamber.length)];
+
+    if (cpuChoice == bulletPosition) {
+      setState(() {
+        message = "CPU shoot theirself. ¡You win!";
+      });
+      return;
+    } else {
+      setState(() {
+        chamber.remove(cpuChoice);
+        message = "CPU is safe. Your turn.";
+      });
+    }
+
+    if (chamber.length == 1) {
+      setState(() {
+        message = "CPU shoot theirself. ¡You win!";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,74 +78,46 @@ class _RouletteScreenState extends State<Roulette> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: const Column(
-        children: <Widget>[
-          Padding(padding: EdgeInsets.all(10), child: Text('Рулетка')),
-        ],
+      backgroundColor: const Color.fromARGB(255, 255, 255, 100),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Image(
+                image: NetworkImage(
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Flag_of_Russia.svg/800px-Flag_of_Russia.svg.png")),
+            Text(message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _controller,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: "Your election...",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                int? choice = int.tryParse(_controller.text);
+                if (choice != null && choice >= 1 && choice <= 6) {
+                  playTurn(choice);
+                } else {
+                  setState(() {
+                    message = "Choose a valid number (1-6).";
+                  });
+                }
+                _controller.clear();
+              },
+              child: const Text("Pull trigger"),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: Method.goToHome(context),
     );
   }
 }
-/*
-     print("Vamos a jugar a la ruleta rusa.");
-    List<int> colt = [];
-    for (int i = 1; i <7; i++){
-        colt.add(i);
-    }
-    while (colt.length >= 1) {
-        int playerInt = 0;
-        // Turno jugador
-        while (playerInt == 0) {
-            print("Selecciona una posición del tambor.");
-            print("Números disponibles: ${colt.length}");
-            int player_number = TextField(
-                  keyboardType: TextInputType.number,
-                  controller: _averageController,
-                  decoration: const InputDecoration(
-                      labelText: "Your number...",
-                      border: OutlineInputBorder()),
-                  // Only numbers allowed
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                );
-            if Correct(number: player_number) {
-                if Int(player_number)! > colt.count {
-                    print("Posición del tambor no disponible.");
-                } else {
-                    playerInt = Int(player_number)!
-                }
-            }
-        }
-        // Turno CPU
-        let bullet = Int.random(in: 1...colt.count) // posición de la bala
-        let cpu = Int.random(in: 1...colt.count) // Jugador 2
-        /* Condicionales jugador */
-        print("Has decidido usar el hueco", playerInt);
-        if playerInt == bullet {
-            print("-Resultado: te has disparado.");
-            print("El jugador 2 ha salido vivo.");
-            break;
-        }
-        else {
-            print("-Resultado: espacio vacío.")
-            colt.remove(at: colt.count-1)
-        }
-        if colt.count == 1 {
-            print("Has salido vivo.")
-            break
-        }
-        /* Condicionales CPU */
-        print("El jugador 2 ha usado el hueco", cpu)
-        if cpu == bullet {
-            print("-Resultado: le han disparado.")
-            print("Has salido vivo.")
-            break
-        }
-        else {
-            print("-Resultado: espacio vacío.")
-            colt.remove(at: colt.count-1)
-        }
-    }
-  }*/
